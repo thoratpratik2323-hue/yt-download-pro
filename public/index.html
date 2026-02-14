@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVault | Premium YouTube Downloader</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <i class="fab fa-youtube"></i>
+            <span>Stream<span>Vault</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Support</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="hero">
+            <h1>Download Your <span>Favorite</span> Videos</h1>
+            <p>Paste any YouTube link below and download in high quality instantly.</p>
+        </div>
+
+        <div class="search-container">
+            <div class="input-group">
+                <i class="fas fa-link"></i>
+                <input type="text" id="videoUrl" placeholder="Paste YouTube link here..." autocomplete="off">
+                <button id="fetchBtn">
+                    <span class="btn-text">Get Details</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div id="loader" class="loader hidden">
+                <div class="spinner"></div>
+                <p>Fetching video details...</p>
+            </div>
+        </div>
+
+        <div id="resultCard" class="result-card hidden">
+            <div class="video-info">
+                <div class="thumbnail">
+                    <img id="thumbImg" src="" alt="Thumbnail">
+                    <span id="duration" class="badge">0:00</span>
+                </div>
+                <div class="details">
+                    <h2 id="videoTitle">Video Title</h2>
+                    <p id="uploader" class="uploader">Channel Name</p>
+                    <div class="download-options">
+                        <select id="qualitySelect">
+                            <option value="">Select Quality</option>
+                        </select>
+                        <button id="downloadBtn" class="premium-btn">
+                            <i class="fas fa-download"></i> Download Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 StreamVault. Made with <i class="fas fa-heart"></i> for Pratik.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
