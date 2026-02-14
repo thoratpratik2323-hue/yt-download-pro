@@ -15,7 +15,7 @@ document.getElementById('fetchBtn').addEventListener('click', async () => {
     fetchBtn.disabled = true;
 
     try {
-        const response = await fetch('http://localhost:3001/api/info', {
+        const response = await fetch('/api/info', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
@@ -42,7 +42,8 @@ document.getElementById('fetchBtn').addEventListener('click', async () => {
             data.formats.forEach(f => {
                 const option = document.createElement('option');
                 option.value = JSON.stringify({ url: f.url, ext: f.ext });
-                option.innerText = `${f.resolution} (${f.ext}) - ${f.filesize}`;
+                const typeLabel = f.type === 'Audio' ? '🎵 Audio' : '🎥 Video';
+                option.innerText = `${typeLabel}: ${f.resolution} (${f.ext}) - ${f.filesize}`;
                 select.appendChild(option);
             });
 
@@ -67,16 +68,63 @@ document.getElementById('downloadBtn').addEventListener('click', () => {
 
     const { url, ext } = JSON.parse(selectedFormat);
     const title = window.currentVideoTitle || 'video';
+    const downloadUrl = `/api/download?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&ext=${encodeURIComponent(ext)}`;
 
-    // Create download link to the server proxy
-    const downloadUrl = `http://localhost:3001/api/download?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&ext=${encodeURIComponent(ext)}`;
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressStatus = document.getElementById('progressStatus');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-    // Open in new tab or use hidden anchor to force download
-    const a = document.createElement('a');
-    a.href = downloadUrl;
-    a.download = `${title}.${ext}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // UI Reset
+    progressContainer.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressStatus.innerText = 'Starting download...';
+    downloadBtn.disabled = true;
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', downloadUrl, true);
+    xhr.responseType = 'blob';
+
+    xhr.onprogress = (event) => {
+        if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            progressBar.style.width = percentComplete + '%';
+            progressStatus.innerText = `Downloading... ${Math.round(percentComplete)}%`;
+        } else {
+            progressStatus.innerText = 'Downloading...';
+        }
+    };
+
+    xhr.onload = () => {
+        if (xhr.status === 200) {
+            const blob = xhr.response;
+            const downloadLink = document.createElement('a');
+            const fileName = `${title.replace(/[^\w\s]/gi, '')}.${ext}`;
+
+            downloadLink.href = window.URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            progressStatus.innerText = 'Download Complete! ✨';
+            progressBar.style.width = '100%';
+
+            setTimeout(() => {
+                progressContainer.classList.add('hidden');
+                downloadBtn.disabled = false;
+            }, 3000);
+        } else {
+            alert('Download failed. Please try again.');
+            downloadBtn.disabled = false;
+        }
+    };
+
+    xhr.onerror = () => {
+        alert('Network error. Please make sure the server is running.');
+        downloadBtn.disabled = false;
+    };
+
+    xhr.send();
 });
 

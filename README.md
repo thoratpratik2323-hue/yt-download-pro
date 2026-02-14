@@ -19,4 +19,4 @@ This app is ready to be hosted on **Render** or **Railway**.
 2. Set build command: `npm install`
 3. Set start command: `node server.js`
 
-Made with ❤️ by Pratik.
+Made with ❤️ by IP.

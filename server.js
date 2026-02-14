@@ -26,11 +26,12 @@ app.post('/api/info', async (req, res) => {
         });
 
         const formats = info.formats
-            .filter(f => f.vcodec !== 'none' && f.acodec !== 'none')
+            .filter(f => (f.vcodec !== 'none' && f.acodec !== 'none') || (f.vcodec === 'none' && f.acodec !== 'none'))
             .map(f => ({
                 format_id: f.format_id,
                 ext: f.ext,
-                resolution: f.resolution || f.format_note || 'N/A',
+                type: f.vcodec === 'none' ? 'Audio' : 'Video',
+                resolution: f.vcodec === 'none' ? 'Audio only' : (f.resolution || f.format_note || 'N/A'),
                 url: f.url,
                 filesize: f.filesize ? (f.filesize / (1024 * 1024)).toFixed(2) + ' MB' : 'Size N/A'
             }))
@@ -71,6 +72,9 @@ app.get('/api/download', async (req, res) => {
 
         res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
         res.setHeader('Content-Type', 'application/octet-stream');
+        if (response.headers['content-length']) {
+            res.setHeader('Content-Length', response.headers['content-length']);
+        }
 
         response.data.pipe(res);
     } catch (error) {
