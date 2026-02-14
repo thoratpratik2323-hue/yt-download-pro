@@ -33,18 +33,32 @@ document.getElementById('fetchBtn').addEventListener('click', async () => {
             document.getElementById('duration').innerText = data.duration;
 
             // Populate quality options
-            const select = document.getElementById('qualitySelect');
-            select.innerHTML = '<option value="">Select Quality</option>';
+            const optionsContainer = document.getElementById('customOptions');
+            const selectedOptionText = document.getElementById('selectedOptionText');
+            const hiddenInput = document.getElementById('selectedQualityValue');
+
+            optionsContainer.innerHTML = '';
+            selectedOptionText.innerText = 'Select Quality';
+            hiddenInput.value = '';
 
             // Store data for download
             window.currentVideoTitle = data.title;
 
             data.formats.forEach(f => {
-                const option = document.createElement('option');
-                option.value = JSON.stringify({ url: f.url, ext: f.ext });
-                const typeLabel = f.type === 'Audio' ? '🎵 Audio' : '🎥 Video';
-                option.innerText = `${typeLabel}: ${f.resolution} (${f.ext}) - ${f.filesize}`;
-                select.appendChild(option);
+                const item = document.createElement('div');
+                item.className = 'option-item';
+                const typeIcon = f.type === 'Audio' ? 'fas fa-music' : 'fas fa-video';
+                const label = `${f.resolution} (${f.ext}) - ${f.filesize}`;
+
+                item.innerHTML = `<i class="${typeIcon}"></i> <span>${label}</span>`;
+
+                item.addEventListener('click', () => {
+                    selectedOptionText.innerText = label;
+                    hiddenInput.value = JSON.stringify({ url: f.url, ext: f.ext });
+                    optionsContainer.classList.add('hidden');
+                });
+
+                optionsContainer.appendChild(item);
             });
 
             resultCard.classList.remove('hidden');
@@ -59,8 +73,20 @@ document.getElementById('fetchBtn').addEventListener('click', async () => {
     }
 });
 
+// Custom Select Toggle
+document.getElementById('customSelect').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('customOptions').classList.toggle('hidden');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', () => {
+    const options = document.getElementById('customOptions');
+    if (options) options.classList.add('hidden');
+});
+
 document.getElementById('downloadBtn').addEventListener('click', () => {
-    const selectedFormat = document.getElementById('qualitySelect').value;
+    const selectedFormat = document.getElementById('selectedQualityValue').value;
     if (!selectedFormat) {
         alert("Please select a quality first!");
         return;

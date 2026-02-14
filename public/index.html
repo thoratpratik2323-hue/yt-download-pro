@@ -61,9 +61,16 @@
                     <h2 id="videoTitle">Video Title</h2>
                     <p id="uploader" class="uploader">Channel Name</p>
                     <div class="download-options">
-                        <select id="qualitySelect">
-                            <option value="">Select Quality</option>
-                        </select>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="customSelect">
+                                <span id="selectedOptionText">Select Quality</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-options hidden" id="customOptions">
+                                <!-- Dynamic options injected by JS -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedQualityValue">
                         <button id="downloadBtn" class="premium-btn">
                             <i class="fas fa-download"></i> Download Now
                         </button>
